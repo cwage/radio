@@ -1,0 +1,35 @@
+services:
+  dump1090:
+    build: .
+    group_add:
+      - "46"
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
+    ports:
+      - "8080:8080"
+
+  fr24feed:
+    image: ghcr.io/sdr-enthusiasts/docker-flightradar24:latest
+    depends_on:
+      - dump1090
+    environment:
+      - BEASTHOST=dump1090
+      - BEASTPORT=30005
+      - FR24KEY=${FR24KEY:-}
+    volumes:
+      - fr24_config:/etc/fr24feed
+    restart: unless-stopped
+
+  skywatch:
+    build: ../skywatch
+    depends_on:
+      - dump1090
+    ports:
+      - "8081:8081"
+    volumes:
+      - skywatch_data:/data
+    restart: unless-stopped
+
+volumes:
+  fr24_config:
+  skywatch_data:

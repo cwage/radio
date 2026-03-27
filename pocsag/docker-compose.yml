@@ -1,0 +1,11 @@
+services:
+  pocsag:
+    build: .
+    user: "${UID:-1000}:${GID:-1000}"
+    group_add:
+      - "46"
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
+    environment:
+      - FREQ=164.98M
+      - GAIN=40

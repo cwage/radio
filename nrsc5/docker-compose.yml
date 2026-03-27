@@ -1,0 +1,18 @@
+services:
+  nrsc5:
+    build: .
+    user: "${UID:-1000}:${GID:-1000}"
+    group_add:
+      - "46"
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
+    environment:
+      - PULSE_SERVER=unix:/run/user/1000/pulse/native
+    volumes:
+      - /run/user/1000/pulse/native:/run/user/1000/pulse/native
+      - ${HOME}/.config/pulse/cookie:/home/pulse/.config/pulse/cookie:ro
+    # Usage: docker compose run --rm nrsc5 <frequency> <program>
+    # Examples:
+    #   docker compose run --rm nrsc5 90.3 0    # WPLN HD1
+    #   docker compose run --rm nrsc5 90.3 1    # WPLN HD2
+    #   docker compose run --rm nrsc5 -l 90.3 0 # List station info only

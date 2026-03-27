@@ -1,0 +1,22 @@
+services:
+  acarsdec:
+    build: .
+    user: "${UID:-1000}:${GID:-1000}"
+    group_add:
+      - "46"
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
+    command: >
+      -g 40
+      --output json:udp:host=webapp,port=5555
+      --output full:file:path=/dev/stdout
+      --rtlsdr 0
+      129.125 130.025 130.450 131.125 131.550
+    depends_on:
+      - webapp
+
+  webapp:
+    build: ./webapp
+    user: "${UID:-1000}:${GID:-1000}"
+    ports:
+      - "8080:8080"
